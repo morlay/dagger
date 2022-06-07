@@ -15,6 +15,7 @@ help: # Show how to get started & what targets are available
 	@awk -F':+ |$(HELP_TARGET_DEPTH)' '/^[0-9a-zA-Z._%-]+:+.+$(HELP_TARGET_DEPTH).+$$/ { printf "$(GREEN)%-20s\033[0m %s\n", $$1, $$3 }' $(MAKEFILE_LIST) | sort
 	@echo
 
+GIT_VERSION := $(shell git describe --abbrev=0 --tags)
 GIT_REVISION := $(shell git rev-parse --short HEAD)
 .PHONY: dagger
 dagger: # Build a dev dagger binary
@@ -26,7 +27,7 @@ dagger-debug: # Build a debug version of the dev dagger binary
 
 .PHONY: install
 install: # Install a dev dagger binary
-	go install -ldflags '-X go.dagger.io/dagger/version.Revision=$(GIT_REVISION)' ./cmd/dagger
+	go install -ldflags '-s -w -X go.dagger.io/dagger/version.Version=$(GIT_VERSION) -X go.dagger.io/dagger/version.Revision=$(GIT_REVISION)' ./cmd/dagger
 
 .PHONY: test
 test: dagger # Run all tests
@@ -87,3 +88,24 @@ web: # Run the website locally
 .PHONY: todo
 todo: # Find all TODO items
 	grep -r -A 1 "TODO:" $(CURDIR)
+
+
+FEATURES = cuemod poc-multi-arch
+BASE=main
+release:
+
+FEATURES = cuemod poc-multi-arch
+BASE=main
+release:
+	git rebase main
+	git branch -D release-$(BASE) &>/dev/null || true
+	git switch -C release-$(BASE)
+	$(foreach f,$(FEATURES),git merge -m "Merge $(f)" $(f);)
+	go mod tidy && git add . && git commit -m "chore: mod tidy" &>/dev/null || true
+	$(MAKE) install
+	git push -f m refs/heads/release-$(BASE)
+	git switch main
+	git push -f --tags m main
+	git switch release
+	git push -f m release
+.PHONY: release
