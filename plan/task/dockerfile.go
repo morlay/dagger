@@ -154,8 +154,9 @@ func (t *dockerfileTask) Run(ctx context.Context, pctx *plancontext.Context, s *
 	}
 
 	return compiler.NewValue().FillFields(map[string]interface{}{
-		"output": pctx.FS.New(solvedRef).MarshalCUE(),
-		"config": ConvertImageConfig(image.Config),
+		"output":   pctx.FS.New(solvedRef).MarshalCUE(),
+		"config":   ConvertImageConfig(image.Config),
+		"platform": opts["platform"],
 	})
 }
 
@@ -224,27 +225,12 @@ func (t *dockerfileTask) dockerBuildOpts(v *compiler.Value, pctx *plancontext.Co
 		}
 	}
 
-	if platforms := v.Lookup("platforms"); platforms.Exists() {
-		p := []string{}
-		list, err := platforms.List()
+	if platform := v.Lookup("platform"); platform.Exists() {
+		p, err := platform.String()
 		if err != nil {
 			return nil, err
 		}
-
-		for _, platform := range list {
-			s, err := platform.String()
-			if err != nil {
-				return nil, err
-			}
-			p = append(p, s)
-		}
-
-		if len(p) > 0 {
-			opts["platform"] = strings.Join(p, ",")
-		}
-		if len(p) > 1 {
-			opts["multi-platform"] = "true"
-		}
+		opts["platform"] = p
 	}
 	// Set platform to configured one if no one is defined
 	if opts["platform"] == "" {

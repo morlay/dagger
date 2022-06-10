@@ -13,8 +13,16 @@ setup() {
     "$DAGGER" "do" -p ./tasks/pull/pull_auth.cue pull
 }
 
+@test "task: #Pull platform" {
+    "$DAGGER" "do" -p ./tasks/pull/pull_platform.cue pull
+}
+
 @test "task: #Push" {
     "$DAGGER" "do" -p ./tasks/push/push.cue pullOutputFile
+}
+
+@test "task: #Push multi platform" {
+    "$DAGGER" "do" -p ./tasks/push/push_multi_platform.cue
 }
 
 @test "task: #ReadFile" {
