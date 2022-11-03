@@ -9,7 +9,7 @@ require (
 	github.com/charmbracelet/glamour v0.5.0
 	github.com/containerd/console v1.0.3
 	github.com/containerd/containerd v1.6.8
-	github.com/docker/buildx v0.8.2
+	github.com/docker/buildx v0.9.1
 	github.com/docker/distribution v2.8.1+incompatible
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/gofrs/flock v0.8.1
@@ -31,7 +31,7 @@ require (
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.13.0
 	github.com/stretchr/testify v1.8.0
-	github.com/tonistiigi/fsutil v0.0.0-20220315205639-9ed612626da3
+	github.com/tonistiigi/fsutil v0.0.0-20220510150904-0dbf3a8a7d58
 	github.com/tonistiigi/units v0.0.0-20180711220420-6950e57a87ea
 	github.com/tonistiigi/vt100 v0.0.0-20210615222946-8066bb97264f
 	//!!!! the version of go.opentelemetry.io/otel MUST be kept in sync with BuildKit's version !!!!
@@ -103,7 +103,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/iancoleman/strcase v0.2.0 // indirect
-	github.com/imdario/mergo v0.3.12 // indirect
+	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/kevinburke/ssh_config v0.0.0-20201106050909-4977a11b4351 // indirect
