@@ -19,7 +19,8 @@ import (
 
 	// Resulting image with the config changes
 	output: #Image & {
-		rootfs: input.rootfs
-		config: _set.output
+		rootfs:   input.rootfs
+		platform: input.platform
+		config:   _set.output
 	}
 }

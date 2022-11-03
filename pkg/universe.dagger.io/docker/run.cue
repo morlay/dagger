@@ -184,6 +184,7 @@ import (
 	output: #Image & {
 		rootfs: _exec.output
 		config: input.config
+		platform: input.platform
 	}
 
 	// Actually execute the command

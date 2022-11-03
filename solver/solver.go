@@ -212,6 +212,40 @@ func (s *Solver) forwardEvents(ch chan *bk.SolveStatus, ignoreLogs bool) {
 	}
 }
 
+type BuildFunc = func(ctx context.Context, ret *bkgw.Result, c bkgw.Client) error
+
+// BuildExport single `output` with custom build functions
+func (s *Solver) BuildExport(ctx context.Context, output bk.ExportEntry, buildFuncs ...BuildFunc) (*bk.SolveResponse, error) {
+	select {
+	case <-s.closeCh:
+		return nil, context.Canceled
+	default:
+	}
+
+	opts := bk.SolveOpt{
+		Exports: []bk.ExportEntry{output},
+		Session: []session.Attachable{
+			s.opts.Auth,
+			NewSecretsStoreProvider(s.opts.Context),
+			NewDockerSocketProvider(s.opts.Context),
+		},
+	}
+
+	ch := make(chan *bk.SolveStatus)
+
+	go s.forwardEvents(ch, true)
+
+	return s.opts.Control.Build(ctx, opts, "", func(ctx context.Context, c bkgw.Client) (*bkgw.Result, error) {
+		ret := bkgw.NewResult()
+		for i := range buildFuncs {
+			if err := buildFuncs[i](ctx, ret, c); err != nil {
+				return nil, err
+			}
+		}
+		return ret, nil
+	}, ch)
+}
+
 // Export will export `st` to `output`
 // FIXME: this is currently implemented as a hack, starting a new Build session
 // within buildkit from the Control API. Ideally the Gateway API should allow to
