@@ -61,7 +61,11 @@ func New(ctx context.Context, host string, cfg Config) (*Client, error) {
 	defer span.End()
 
 	if host == "" {
-		host = os.Getenv("BUILDKIT_HOST")
+		if buildkitArch := os.Getenv("BUILDKIT_ARCH"); buildkitArch != "" {
+			host = os.Getenv("BUILDKIT_HOST_" + strings.ToUpper(buildkitArch))
+		} else {
+			host = os.Getenv("BUILDKIT_HOST")
+		}
 	}
 	if host == "" {
 		h, err := buildkitd.Start(ctx)
